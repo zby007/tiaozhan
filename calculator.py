@@ -2,8 +2,6 @@
 
 import sys
 
-
-
 try:
     if len(sys.argv) > 2:
         raise ValueError()
@@ -41,11 +39,6 @@ try:
         finalTax = taxMoney * 0.45 - 13505        
         print(format(finalTax,".2f"))
 
-
-
-
 except ValueError:
     print("Parameter Error")
 
-finally:
-    ####buchuli
