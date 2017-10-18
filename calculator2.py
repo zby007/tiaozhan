@@ -54,7 +54,7 @@ if __name__ == "__main__":
             salDict={}
             for tmpStr in salList:
                 keyStr = tmpStr.split(':')
-                gongHao = keyStr[0]
+                gongHao = int(keyStr[0])
                 salary = int(keyStr[1])
 
                 sheBao = calShebao(salary)
@@ -62,8 +62,10 @@ if __name__ == "__main__":
                 finalSal = salary - sheBao -tax
                 salDict[gongHao] = finalSal
             
-            print(len(salDict))
- 
+            for key,value in salDict.items():
+                print("{0}:{1:.2f}".format(key,value))
+            
+           
     except ValueError:
         print("Parameter Error")
 
