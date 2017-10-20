@@ -24,7 +24,7 @@ class UserData(object):
         with open('./{0}'.format(self._userfile)) as ufile:
             for tmpline in ufile:
                 tmpstr = tmpline.split(',')
-                self._userdict[int(tmpstr[0].strip())]=float(tmpstr[1].strip())
+                self._userdict[int(tmpstr[0].strip())]=int(tmpstr[1].strip())
 
     def get_userdict(self):
         return self._userdict
@@ -40,7 +40,7 @@ def calShebao(salary,configdict):
     elif salary > configdict['JiShuH']:
         tmp = configdict['JiShuH']
 
-    sheBao = tmp*(configdict['YangLao'] + configdict['Yiliao'] + configdict['ShiYe'] + configdict['GongShang'] + configdict['ShengYu'] + configdict['GongJiJin'])
+    sheBao = tmp*(configdict['YangLao'] + configdict['YiLiao'] + configdict['ShiYe'] + configdict['GongShang'] + configdict['ShengYu'] + configdict['GongJiJin'])
     return sheBao
 
    
@@ -95,7 +95,23 @@ if __name__ == "__main__":
     userfile = args[index+1]
     userdata = UserData(userfile)
     userdict = userdata.get_userdict()
+
     print(userdict)
+
+    
+    for tmpstr in userdict.items():
+        sheBao = calShebao(tmpstr[1],configdict)
+        tax = calTax(tmpstr[1],sheBao)
+        shifa = tmpstr[1] - sheBao - tax
+        
+        tmpLine = '{0},{1},{2:.2f},{3:.2f},{4:.2f}'.format(tmpstr[0],tmpstr[1],sheBao,tax,shifa)
+        print(tmpLine)
+
+   
+
+
+
+
 '''
     try:
         lenInput = len(sys.argv)
