@@ -88,7 +88,6 @@ if __name__ == "__main__":
     configfile = args[index+1]
     rconfig = Config(configfile)
     configdict = rconfig.get_configdict()
-    print(configdict)
 
 
     index = args.index('-d')
@@ -96,18 +95,25 @@ if __name__ == "__main__":
     userdata = UserData(userfile)
     userdict = userdata.get_userdict()
 
-    print(userdict)
 
+
+    outputList = []
     
     for tmpstr in userdict.items():
         sheBao = calShebao(tmpstr[1],configdict)
         tax = calTax(tmpstr[1],sheBao)
         shifa = tmpstr[1] - sheBao - tax
         
-        tmpLine = '{0},{1},{2:.2f},{3:.2f},{4:.2f}'.format(tmpstr[0],tmpstr[1],sheBao,tax,shifa)
-        print(tmpLine)
-
+        tmpLine = '{0},{1},{2:.2f},{3:.2f},{4:.2f}\n'.format(tmpstr[0],tmpstr[1],sheBao,tax,shifa)
+        outputList.append(tmpLine)
    
+
+
+    index = args.index('-o')
+    outputfile = args[index+1]
+    with open('./{0}'.format(outputfile),'w') as ofile:
+        for tmpLine in outputList:
+            ofile.write(tmpLine)
 
 
 
