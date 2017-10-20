@@ -107,8 +107,8 @@ if __name__ == "__main__":
         tmpLine = '{0},{1},{2:.2f},{3:.2f},{4:.2f}\n'.format(tmpstr[0],tmpstr[1],sheBao,tax,shifa)
         outputList.append(tmpLine)
    
-
-
+    outputList.sort()
+    
     index = args.index('-o')
     outputfile = args[index+1]
     with open('./{0}'.format(outputfile),'w') as ofile:
