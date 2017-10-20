@@ -10,15 +10,37 @@ class Config(object):
         with open('./{0}'.format(self._configfile)) as cfile:
             for tmpline in cfile:
                 tmpstr = tmpline.split('=')
-                self._configdict[tmpstr[0].strip()]=tmpstr[1].strip() 
+                self._configdict[tmpstr[0].strip()]=float(tmpstr[1].strip()) 
 
     def get_configdict(self):
-        print(self._configdict)     
+        return self._configdict   
             
+class UserData(object):
+
+    def __init__(self,userfile):
+        self._userfile = userfile
+        self._userdict = {}
+
+        with open('./{0}'.format(self._userfile)) as ufile:
+            for tmpline in ufile:
+                tmpstr = tmpline.split(',')
+                self._userdict[int(tmpstr[0].strip())]=float(tmpstr[1].strip())
+
+    def get_userdict(self):
+        return self._userdict
 
 
-def calShebao(salary):
-    sheBao = salary*(0.08 + 0.02 + 0.005 + 0.06)
+
+
+def calShebao(salary,configdict):
+      
+    tmp=salary
+    if salary < configdict['JiShuL']:
+        tmp = configdict['JiShuL']
+    elif salary > configdict['JiShuH']:
+        tmp = configdict['JiShuH']
+
+    sheBao = tmp*(configdict['YangLao'] + configdict['Yiliao'] + configdict['ShiYe'] + configdict['GongShang'] + configdict['ShengYu'] + configdict['GongJiJin'])
     return sheBao
 
    
@@ -60,10 +82,20 @@ def calTax(salary,sbMoney):
 
 if __name__ == "__main__":
 
+    args = sys.argv[1:]
+   
+    index = args.index('-c')
+    configfile = args[index+1]
+    rconfig = Config(configfile)
+    configdict = rconfig.get_configdict()
+    print(configdict)
 
 
-    rconfig = Config('test.cfg')
-    rconfig.get_configdict()
+    index = args.index('-d')
+    userfile = args[index+1]
+    userdata = UserData(userfile)
+    userdict = userdata.get_userdict()
+    print(userdict)
 '''
     try:
         lenInput = len(sys.argv)
