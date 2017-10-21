@@ -7,7 +7,7 @@ class Config(object):
     def __init__(self,configfile):
         self._configfile = configfile
         self._configdict = {}
-        with open('./{0}'.format(self._configfile)) as cfile:
+        with open('{0}'.format(self._configfile)) as cfile:
             for tmpline in cfile:
                 tmpstr = tmpline.split('=')
                 self._configdict[tmpstr[0].strip()]=float(tmpstr[1].strip()) 
@@ -21,7 +21,7 @@ class UserData(object):
         self._userfile = userfile
         self._userdict = {}
 
-        with open('./{0}'.format(self._userfile)) as ufile:
+        with open('{0}'.format(self._userfile)) as ufile:
             for tmpline in ufile:
                 tmpstr = tmpline.split(',')
                 self._userdict[int(tmpstr[0].strip())]=int(tmpstr[1].strip())
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     
     index = args.index('-o')
     outputfile = args[index+1]
-    with open('./{0}'.format(outputfile),'w') as ofile:
+    with open('{0}'.format(outputfile),'w') as ofile:
         for tmpLine in outputList:
             ofile.write(tmpLine)
 
