@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import queue
 import sys
 from multiprocessing import Process,Queue
 
@@ -23,20 +23,15 @@ class Config(object):
         return self._configdict   
             
 class UserData(Process):
-
-    def __init__(self,userfile):
-        self._userfile = userfile
-        self._userdict = {}
-     
     def run(self):
-        with open('{0}'.format(self._userfile)) as ufile:
+        index = args.index('-d')
+        userfile = args[index+1]
+        userdict = {}
+        with open('{0}'.format(userfile)) as ufile:
             for tmpline in ufile:
                 tmpstr = tmpline.split(',')
-                self._userdict[int(tmpstr[0].strip())]=int(tmpstr[1].strip())
-                q_user.put(self._userdict)
-
-    def get_userdict(self):
-        return self._userdict
+                userdict[int(tmpstr[0].strip())]=int(tmpstr[1].strip())
+                q_user.put(userdict)
 
 
 
@@ -92,29 +87,35 @@ class CalcuResult(Process):
             return finalTax
 
     def run(self):
-        udata = q_user.get()
-        data = []
-        for tmpdata in udata.items():
-            sbMoney = self.calShebao(tmpdata[1])
-            taxMoney= self.calTax(tmpdata[1],sbMoney)
-            shifa = tmpdata[1] - sbMoney - taxMoney
+        while True:
+            try:
+                udata = q_user.get(timeout=1)
+            except queue.Empty:
+                return
+            data = []
+            for tmpdata in udata.items():
+                sbMoney = self.calShebao(tmpdata[1])
+                taxMoney= self.calTax(tmpdata[1],sbMoney)
+                shifa = tmpdata[1] - sbMoney - taxMoney
 
-
-            tmpLine = '{0},{1},{2:.2f},{3:.2f},{4:.2f}\n'.format(tmpdata[0],tmpdata[1],sbMoney,taxMoney,shifa)
-            data.append(tmpLine)
-        q_result.put(data)
+                tmpLine = '{0},{1},{2:.2f},{3:.2f},{4:.2f}\n'.format(tmpdata[0],tmpdata[1],sbMoney,taxMoney,shifa)
+                data.append(tmpLine)
+            q_result.put(data)
 
 class WriteResult(Process):
 
     def run(self):
-        result = q_result.get()
-        result.sort()
-    
-        index = args.index('-o')
-        outputfile = args[index+1]
-        with open('{0}'.format(outputfile),'w') as ofile:
-            for tmpLine in result:
-                ofile.write(tmpLine)
+        while True:
+            try:         
+                result = q_result.get(timeout=1)
+            except queue.Empty:
+                return
+            result.sort()   
+            index = args.index('-o')
+            outputfile = args[index+1]
+            with open('{0}'.format(outputfile),'w') as ofile:
+                for tmpLine in result:
+                    ofile.write(tmpLine)
 
 
 if __name__ == "__main__":
@@ -127,9 +128,7 @@ if __name__ == "__main__":
     configdict = rconfig.get_configdict()
 
 
-    index = args.index('-d')
-    userfile = args[index+1]
-    userdata = UserData(userfile)
+    userdata = UserData()
     userdata.run()
 
     calresult = CalcuResult(configdict)
