@@ -31,7 +31,7 @@ class UserData(Process):
             for tmpline in ufile:
                 tmpstr = tmpline.split(',')
                 userdict[int(tmpstr[0].strip())]=int(tmpstr[1].strip())
-                q_user.put(userdict)
+            q_user.put(userdict)
 
 
 
