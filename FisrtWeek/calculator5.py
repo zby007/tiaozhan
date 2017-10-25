@@ -4,7 +4,7 @@ import sys
 from multiprocessing import Process,Queue
 import getopt
 import configparser
-
+from datetime import datetime
 
 
 q_user = Queue()
@@ -102,8 +102,9 @@ class CalcuResult(Process):
                 sbMoney = self.calShebao(tmpdata[1])
                 taxMoney= self.calTax(tmpdata[1],sbMoney)
                 shifa = tmpdata[1] - sbMoney - taxMoney
-                
-                tmpLine = '{0},{1},{2:.2f},{3:.2f},{4:.2f}\n'.format(tmpdata[0],tmpdata[1],sbMoney,taxMoney,shifa)
+                t = datetime.now()
+                tmptime = datetime.strftime(t,'%Y-%m-%d %H:%M:%S') 
+                tmpLine = '{0},{1},{2:.2f},{3:.2f},{4:.2f},{5}\n'.format(tmpdata[0],tmpdata[1],sbMoney,taxMoney,shifa,tmptime)
                 data.append(tmpLine)
             q_result.put(data)
 
